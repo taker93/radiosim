@@ -29,6 +29,9 @@ export const useDeviceStore = defineStore('device', {
         showCheckmark: false,
         showFail: false,
         hasSDS: false,
+        hasManDownFeature: false,
+        manDownActive: false,
+        manDownWarning: false,
     }),
     actions: {
         updateDateTime() {
@@ -58,7 +61,7 @@ export const useDeviceStore = defineStore('device', {
             this.contexts = {
                 left: 'Schrift',
                 middle: 'Gruppe',
-                right: 'Hilfe',
+                right: this.hasManDownFeature ? 'Tot E/A' : 'Hilfe',
             };
         },
         toggleLock() {
@@ -110,11 +113,25 @@ export const useDeviceStore = defineStore('device', {
         },
         powerOff() {
             this.isPoweredOff = true;
+        },
+        setManDownFeature(config: boolean) {
+            this.hasManDownFeature = config;
+            this.resetContextmenu();
+        },
+        toggleManDown() {
+            this.manDownActive = !this.manDownActive;
+        },
+        toggleManDownWarning() {
+            this.manDownWarning = !this.manDownWarning;
+            this.toggleModal('ManDownWarningModal');
         }
     },
     getters: {
         isGroupSelected(): boolean {
             return this.group !== null && this.folder !== null;
+        },
+        getContexts(): Contexts {
+            return this.contexts;
         }
     }
 });

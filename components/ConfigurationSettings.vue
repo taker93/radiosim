@@ -15,22 +15,50 @@ function listenDebug(e: KeyboardEvent) {
     settings.debug = !settings.debug;
   }
 }
+
+const hasManDownFeature = computed<boolean>({
+  get() {
+    return device.hasManDownFeature;
+  },
+  set(newValue) {
+    device.hasManDownFeature = newValue;
+    device.resetContextmenu();
+  }
+});
 </script>
 
 <template>
   <div class="p-4 bg-white border border-gray-300 rounded-md shadow-md focus:outline-none" tabindex="0"
        @keyup.shift="listenDebug">
     <h3 class="font-bold text-xl mb-2">Konfigurationseinstellungen</h3>
-    <div class="mb-4">
-      <label for="timeout" class="block text-sm font-medium text-gray-700">Gruppenwechsel Timeout (Sekunden)</label>
-      <input
-          id="timeout"
-          type="number"
-          min="1"
-          v-model.number="settings.modalTimeout"
-          @input="updateTimeout($event.target?.value)"
-          class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-      />
+    <div class="mb-4 space-y-2">
+      <div>
+        <label for="timeout" class="block text-sm font-medium text-gray-700">Gruppenwechsel Timeout (Sekunden)</label>
+        <input
+            id="timeout"
+            type="number"
+            min="1"
+            v-model.number="settings.modalTimeout"
+            @input="updateTimeout($event.target?.value)"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+
+      <div>
+        <label for="hasManDownFeature" class="text-base font-medium text-gray-700 mr-2">Gerät mit
+          Totmannschaltung:</label>
+        <input id="hasManDownFeature" class="p-2 border border-gray-300 rounded-md" type="checkbox"
+               v-model="hasManDownFeature"/>
+      </div>
+
+      <div>
+        <button :class="device.manDownWarning ? 'bg-green-500 hover:bg-green-700' : 'bg-red-500 hover:bg-red-700'"
+                class="text-white font-bold py-2 px-4 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                :disabled="!device.hasManDownFeature || !device.manDownActive"
+                @click="device.toggleManDownWarning">
+          {{ device.manDownWarning ? 'Totmann beenden' : 'Totmann auslösen' }}
+        </button>
+      </div>
     </div>
 
     <div v-if="settings.debug">
@@ -38,14 +66,19 @@ function listenDebug(e: KeyboardEvent) {
       <h4 class="font-bold text-base">Geräteinfos</h4>
       <div class="my-4 space-y-2">
         <div>
-          <label for="currentAction" class="text-base font-medium text-gray-700 mr-2">Ausgeschaltet:</label>
-          <input id="currentAction" class="p-2 border border-gray-300 rounded-md" type="checkbox"
+          <label for="isPoweredOff" class="text-base font-medium text-gray-700 mr-2">Ausgeschaltet:</label>
+          <input id="isPoweredOff" class="p-2 border border-gray-300 rounded-md" type="checkbox"
                  v-model="device.isPoweredOff"/>
         </div>
         <div>
-          <label for="activeModal" class="text-base font-medium text-gray-700 mr-2">Bootup:</label>
-          <input id="activeModal" class="p-2 border border-gray-300 rounded-md" type="checkbox"
+          <label for="isBooting" class="text-base font-medium text-gray-700 mr-2">Bootup:</label>
+          <input id="isBooting" class="p-2 border border-gray-300 rounded-md" type="checkbox"
                  v-model="device.isBooting"/>
+        </div>
+        <div>
+          <label for="hasSDS" class="text-base font-medium text-gray-700 mr-2">SDS:</label>
+          <input id="hasSDS" class="p-2 border border-gray-300 rounded-md" type="checkbox"
+                 v-model="device.hasSDS"/>
         </div>
       </div>
 

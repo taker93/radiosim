@@ -20,6 +20,7 @@ const store = useDeviceStore();
             <Icon v-if="store.locked" name="material-symbols:key" class="text-amber-400"/>
             <Icon name="material-symbols:person"/>
             <Icon v-if="store.hasSDS" name="material-symbols:mail-rounded" class="text-amber-400"/>
+            <Icon v-if="store.manDownActive" name="material-symbols:detection-and-zone" class="text-amber-400"/>
           </div>
           <div class="space-x-1">
             <Icon name="material-symbols:battery-horiz-075-rounded" class="text-green-400"/>
@@ -39,6 +40,8 @@ const store = useDeviceStore();
             <template v-else-if="store.activeModal === 'LockModeModal'">
               <LockModeModal/>
             </template>
+            <ManDownModal v-else-if="store.activeModal === 'ManDownModal'"/>
+            <ManDownWarningModal v-else-if="store.activeModal === 'ManDownWarningModal'"/>
           </div>
 
           <!-- Checkmark Modal -->
@@ -80,13 +83,13 @@ const store = useDeviceStore();
 
         <!-- Context Hints -->
         <div class="grid grid-cols-3 gap-0.5 text-[10px] text-center bg-gray-200">
-          <div v-if="store.contexts.left" class="bg-blue-800 px-2">{{ store.contexts.left }}</div>
+          <div v-if="store.getContexts.left" class="bg-blue-800 px-2">{{ store.getContexts.left }}</div>
           <div v-else></div>
 
-          <div v-if="store.contexts.middle" class="bg-blue-800 px-2">{{ store.contexts.middle }}</div>
+          <div v-if="store.getContexts.middle" class="bg-blue-800 px-2">{{ store.getContexts.middle }}</div>
           <div v-else></div>
 
-          <div v-if="store.contexts.right" class="bg-blue-800 px-2">{{ store.contexts.right }}</div>
+          <div v-if="store.getContexts.right" class="bg-blue-800 px-2">{{ store.getContexts.right }}</div>
           <div v-else></div>
         </div>
       </div>
