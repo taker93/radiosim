@@ -26,3 +26,7 @@ export enum Mode {
     DMO = "DMO",
     TMO = "TMO",
 }
+
+export interface DeviceConfig {
+    hasManDownFeature: boolean;
+}

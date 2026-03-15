@@ -61,9 +61,19 @@ function handleRightButtonClick(event: Event) {
   }
 
   // handle help (home)
-  if (store.currentAction === '') {
-
+  if (store.currentAction === '' && !store.hasManDownFeature) {
+    return;
   }
+
+  if (store.hasManDownFeature) {
+    console.log('Activate ManDown Feature');
+    if (store.manDownActive) {
+      store.toggleManDown();
+    } else {
+      store.toggleModal('ManDownModal');
+    }
+  }
+
   // handle lockmode & group selection
   else if (store.currentAction === 'toggleLock' || store.currentAction === 'selectGroup') {
     console.log('Cancel...')
