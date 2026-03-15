@@ -1,15 +1,27 @@
 // /stores/useNavigationStore.ts
 import type {Folder, Group, Root} from "~/types/interfaces";
-import {folderData} from '@/data/folderData';
+import {folderData as defaultFolderData} from '@/data/folderData';
+
+const STORAGE_KEY = 'funksim-folderData';
 
 export const useNavigationStore = defineStore('navigation', {
-    state: () => ({
+    state: () => {
+        let folderData: Root = defaultFolderData;
+        if (import.meta.client) {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try { folderData = JSON.parse(saved); } catch {}
+            }
+        }
+        return {
+        folderData,
         currentLevel: 1, // Gibt an, auf welcher Ebene wir uns befinden (0 = Root, 1 = erste Ebene, usw.)
         currentFolder: null as Folder | null,  // Der aktuelle Ordner, wenn wir tiefer als die Root-Ebene sind
         currentGroup: null as Group | null, // Die aktuelle Gruppe, wenn eine ausgewählt ist
         path: [] as string[], // Der Navigationspfad
         numberSearch: '',
-    }),
+        };
+    },
 
     actions: {
         initialize(selectedGroup?: Group) {
@@ -27,7 +39,7 @@ export const useNavigationStore = defineStore('navigation', {
                 }
             } else {
                 this.currentLevel = 1;
-                this.currentFolder = folderData.folders[0];
+                this.currentFolder = this.folderData.folders[0];
                 this.currentGroup = null;
                 this.path = [];
             }
@@ -41,7 +53,7 @@ export const useNavigationStore = defineStore('navigation', {
 
                 if (this.path.length == 0) {
                     this.path.pop();
-                    this.currentFolder = folderData.folders.find(f => f.name === parentFolder) || null;
+                    this.currentFolder = this.folderData.folders.find(f => f.name === parentFolder) || null;
                     this.currentGroup = null;
                 } else {
                     this.currentFolder = this.getFolderByPath(this.path);
@@ -76,7 +88,7 @@ export const useNavigationStore = defineStore('navigation', {
             const curParentFolder = this.getFolderByPath(this.path);
 
             if (!curParentFolder) { // wir sind auf Root-Level
-                this.navigateThrough(folderData.folders, direction);
+                this.navigateThrough(this.folderData.folders, direction);
             } else if (curParentFolder.subFolders) { // wir sind auf einer Unterebene
                 this.navigateThrough(curParentFolder.subFolders, direction);
             }
@@ -204,14 +216,14 @@ export const useNavigationStore = defineStore('navigation', {
                 return null;
             }
 
-            return searchRoot(folderData);
+            return searchRoot(this.folderData);
         },
 
         getFolderPath(search: string): string[] {
             console.debug('Searching for folder', search);
             let path: string[] = [];
 
-            for (const folder of folderData.folders) {
+            for (const folder of this.folderData.folders) {
                 const found = this.searchPath(search, folder, [folder.name]);
                 if (found.length > 0) {
                     path.push(...found);
@@ -253,7 +265,7 @@ export const useNavigationStore = defineStore('navigation', {
         getFolderByPath(pathArray: string[]): Folder | null {
             console.log('getFolderByPath...');
 
-            let root: Root = folderData;
+            let root: Root = this.folderData;
             let currentFolder: Folder | null = null;
 
             for (const folderName of pathArray) {
@@ -314,7 +326,7 @@ export const useNavigationStore = defineStore('navigation', {
                 return null;
             }
 
-            for (const folder of folderData.folders) {
+            for (const folder of this.folderData.folders) {
                 const found = searchFolders(folder);
                 if (found) {
                     return found;
@@ -323,5 +335,82 @@ export const useNavigationStore = defineStore('navigation', {
             return null;
         },
 
+        importFolderData(data: Root) {
+            this.folderData = data;
+            this.initialize();
+            if (import.meta.client) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+        },
+
+        addGroup(folderId: number, group: Group) {
+            function findAndAdd(folders: Folder[]): boolean {
+                for (const folder of folders) {
+                    if (folder.id === folderId) {
+                        if (!folder.groups) folder.groups = [];
+                        folder.groups.push(group);
+                        return true;
+                    }
+                    if (folder.subFolders && findAndAdd(folder.subFolders)) return true;
+                }
+                return false;
+            }
+            findAndAdd(this.folderData.folders);
+            if (import.meta.client) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(this.folderData));
+            }
+        },
+
+        updateGroup(originalFolderId: number, originalGroupName: string, newFolderId: number, updatedGroup: Group) {
+            if (originalFolderId === newFolderId) {
+                function findAndUpdate(folders: Folder[]): boolean {
+                    for (const folder of folders) {
+                        if (folder.id === originalFolderId && folder.groups) {
+                            const idx = folder.groups.findIndex(g => g.name === originalGroupName);
+                            if (idx !== -1) {
+                                folder.groups[idx] = updatedGroup;
+                                return true;
+                            }
+                        }
+                        if (folder.subFolders && findAndUpdate(folder.subFolders)) return true;
+                    }
+                    return false;
+                }
+                findAndUpdate(this.folderData.folders);
+            } else {
+                function removeFromFolder(folders: Folder[]): boolean {
+                    for (const folder of folders) {
+                        if (folder.id === originalFolderId && folder.groups) {
+                            const idx = folder.groups.findIndex(g => g.name === originalGroupName);
+                            if (idx !== -1) { folder.groups.splice(idx, 1); return true; }
+                        }
+                        if (folder.subFolders && removeFromFolder(folder.subFolders)) return true;
+                    }
+                    return false;
+                }
+                removeFromFolder(this.folderData.folders);
+                this.addGroup(newFolderId, updatedGroup);
+                return; // addGroup already persists
+            }
+            if (import.meta.client) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(this.folderData));
+            }
+        },
+
+    },
+
+    getters: {
+        allFolders(): Array<{ id: number; label: string }> {
+            const result: Array<{ id: number; label: string }> = [];
+            function collect(folder: Folder, path: string) {
+                const label = path ? `${path} > ${folder.name}` : folder.name;
+                result.push({ id: folder.id, label });
+                if (folder.subFolders) {
+                    for (const sub of folder.subFolders) collect(sub, label);
+                }
+            }
+            for (const folder of this.folderData.folders) collect(folder, '');
+            return result;
+        },
     },
 });

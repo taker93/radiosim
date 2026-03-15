@@ -9,7 +9,8 @@ onMounted(() => {
   // Event Listener hinzufügen
   const handleButtonClick = (event: Event) => {
     const target = event.target as HTMLElement;
-    if (target.tagName === 'BUTTON') {
+    const radioDevice = document.getElementById('radio-device');
+    if (target.tagName === 'BUTTON' && radioDevice?.contains(target)) {
       playSound('/sounds/button_sound.wav');
       settings.resetModalTimer();
     }

@@ -31,4 +31,3 @@ export const useSoundStore = defineStore('sound', {
     }
 });
 
-

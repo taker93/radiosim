@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import TreeNode from './TreeNode.vue';
-import {type Folder, type Group, type Root} from "~/types/interfaces"; // Wir erstellen gleich eine TreeNode-Komponente
+import {type Folder, type Group, type Root} from "~/types/interfaces";
 
-const props = defineProps<{ folder: Root }>();
+const props = defineProps<{ folder: Root; selectedGroupName?: string }>();
+const emit = defineEmits<{
+  (e: 'selectGroup', group: Group, folder: Folder): void;
+}>();
+
 const root = ref<Root>(props.folder);
 
 // Funktion zum Entfernen des Elements aus dem Tree
@@ -93,16 +97,10 @@ function addItemToTarget(folders: Folder[], targetFolderName: string | null, ite
 
         // sort by name
         folder.groups.sort((a, b) => {
-          const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-          const nameB = b.name.toUpperCase(); // ignore upper and lowercase
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-
-          // names must be equal
+          const nameA = a.name.toUpperCase();
+          const nameB = b.name.toUpperCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
           return 0;
         });
       } else {
@@ -111,16 +109,10 @@ function addItemToTarget(folders: Folder[], targetFolderName: string | null, ite
 
         // sort by name
         folder.subFolders.sort((a, b) => {
-          const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-          const nameB = b.name.toUpperCase(); // ignore upper and lowercase
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-
-          // names must be equal
+          const nameA = a.name.toUpperCase();
+          const nameB = b.name.toUpperCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
           return 0;
         });
       }
@@ -137,13 +129,14 @@ function addItemToTarget(folders: Folder[], targetFolderName: string | null, ite
 
 <template>
   <div>
-    <!-- Hier werden wir die Ordner und Gruppen rekursiv rendern -->
     <TreeNode
         v-for="folder in root.folders"
         :key="folder.name"
         :folder="folder"
         :root="true"
+        :selectedGroupName="selectedGroupName"
         @moveItem="moveItem"
+        @selectGroup="(group, folder) => emit('selectGroup', group, folder)"
     />
   </div>
 </template>

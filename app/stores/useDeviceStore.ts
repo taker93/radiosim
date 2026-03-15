@@ -107,12 +107,19 @@ export const useDeviceStore = defineStore('device', {
         powerOn() {
             this.isPoweredOff = false;
             this.isBooting = true;
+            if (this.dateTimeInterval) {
+                clearInterval(this.dateTimeInterval);
+            }
             this.dateTimeInterval = setInterval(() => {
                 this.updateDateTime();
             }, 60000); // Alle 60 Sekunden aktualisieren
         },
         powerOff() {
             this.isPoweredOff = true;
+            if (this.dateTimeInterval) {
+                clearInterval(this.dateTimeInterval);
+                this.dateTimeInterval = null;
+            }
         },
         setManDownFeature(config: boolean) {
             this.hasManDownFeature = config;

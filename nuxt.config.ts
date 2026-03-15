@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 
-    compatibilityDate: '2024-04-03',
+    compatibilityDate: '2025-11-01',
     devtools: {enabled: true},
     modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/icon', '@nuxt/fonts'],
     ssr: false,
