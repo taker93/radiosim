@@ -1,3 +1,5 @@
+const WELCOME_STORAGE_KEY = 'funksim-welcome-closed';
+
 // /stores/useAppSettingsStore.ts
 export const useAppSettingsStore = defineStore('settings', {
     state: () => ({
@@ -5,6 +7,7 @@ export const useAppSettingsStore = defineStore('settings', {
         modalPostAction: {} as Function,
         modalTimeout: 5, // Standard Timeout von 5 Sekunden
         debug: false,
+        welcomeMessageClosed: false,
     }),
     actions: {
         setModalTimeout(timeout: number) {
@@ -33,6 +36,13 @@ export const useAppSettingsStore = defineStore('settings', {
                 clearTimeout(this.modalTimer);
                 this.modalTimer = null;
             }
+        },
+        loadWelcomeState() {
+            this.welcomeMessageClosed = localStorage.getItem(WELCOME_STORAGE_KEY) === 'true';
+        },
+        closeWelcomeMessage() {
+            this.welcomeMessageClosed = true;
+            localStorage.setItem(WELCOME_STORAGE_KEY, 'true');
         },
     },
 });

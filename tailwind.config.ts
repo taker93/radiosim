@@ -1,6 +1,9 @@
 import type {Config} from 'tailwindcss'
 
 export default <Partial<Config>>{
+    content: [
+        './app/deviceProfiles/**/*.ts',
+    ],
     theme: {
         extend: {
             fontFamily: {

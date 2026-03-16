@@ -1,8 +1,9 @@
 // /stores/useDeviceStore.ts
 
 import dayjs from 'dayjs';
-import type {Contexts, Folder, Group} from "~/types/interfaces";
+import type {Contexts, DeviceProfile, Folder, Group} from "~/types/interfaces";
 import {Mode} from "~/types/interfaces";
+import {lk24Profile} from "~/deviceProfiles/lk24";
 import {useSound} from "~/composables/useSound";
 
 export const useDeviceStore = defineStore('device', {
@@ -21,11 +22,8 @@ export const useDeviceStore = defineStore('device', {
         activeModal: '',
         currentAction: '', // Neue Eigenschaft für die aktuelle Aktion
         locked: false,
-        contexts: {
-            left: 'Schrift',
-            middle: 'Gruppe',
-            right: 'Hilfe',
-        } as Contexts,
+        activeProfile: lk24Profile as DeviceProfile,
+        contexts: { ...lk24Profile.defaultContexts } as Record<string, string | null>,
         showCheckmark: false,
         showFail: false,
         hasSDS: false,
@@ -54,15 +52,17 @@ export const useDeviceStore = defineStore('device', {
         setStatus(status: string) {
             this.status = status;
         },
-        setContexts(menu: Contexts) {
+        setContexts(menu: Record<string, string | null>) {
             this.contexts = menu;
         },
         resetContextmenu() {
-            this.contexts = {
-                left: 'Schrift',
-                middle: 'Gruppe',
-                right: this.hasManDownFeature ? 'Tot E/A' : 'Hilfe',
-            };
+            this.contexts = this.hasManDownFeature
+                ? { ...this.activeProfile.defaultContextsManDown }
+                : { ...this.activeProfile.defaultContexts };
+        },
+        setActiveProfile(profile: DeviceProfile) {
+            this.activeProfile = profile;
+            this.resetContextmenu();
         },
         toggleLock() {
             this.locked = !this.locked;
@@ -137,7 +137,7 @@ export const useDeviceStore = defineStore('device', {
         isGroupSelected(): boolean {
             return this.group !== null && this.folder !== null;
         },
-        getContexts(): Contexts {
+        getContexts(): Record<string, string | null> {
             return this.contexts;
         }
     }

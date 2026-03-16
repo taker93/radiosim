@@ -3,6 +3,8 @@ import {useDeviceStore} from '@/stores/useDeviceStore';
 
 const store = useDeviceStore();
 
+const s = computed(() => store.activeProfile.styles.bootScreen);
+
 const {playSound} = useSound();
 
 let boottimer: number;
@@ -27,8 +29,8 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="w-full flex items-center justify-center bg-gray-200">
-        <span class="text-6xl text-gray-800">
-          Funk<span class="text-blue-800">Sim</span><span class="text-sm align-super font-medium">OS</span>
-        </span>
+    <span :class="s.logoSize" class="text-gray-800">
+      Funk<span class="text-blue-800">Sim</span><span :class="s.superscriptSize" class="align-super font-medium">OS</span>
+    </span>
   </div>
 </template>

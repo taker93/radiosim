@@ -1,10 +1,22 @@
 <script lang="ts" setup>
 import {useDeviceStore} from "~/stores/useDeviceStore";
 import {useAppSettingsStore} from "~/stores/useAppSettingsStore";
+import {lk24Profile} from "~/deviceProfiles/lk24";
+import {scc3Profile} from "~/deviceProfiles/lkcc";
 
 const device = useDeviceStore();
 const settings = useAppSettingsStore();
 const navigation = useNavigationStore();
+
+const availableProfiles = [lk24Profile, scc3Profile];
+
+const activeProfileId = computed<string>({
+  get() { return device.activeProfile.id; },
+  set(id) {
+    const profile = availableProfiles.find(p => p.id === id);
+    if (profile) device.setActiveProfile(profile);
+  }
+});
 
 function updateTimeout(value: number) {
   settings.setModalTimeout(value);
@@ -32,6 +44,13 @@ const hasManDownFeature = computed<boolean>({
        @keyup.shift="listenDebug">
     <h3 class="font-bold text-xl mb-2">Konfigurationseinstellungen</h3>
     <div class="mb-4 space-y-2">
+      <div>
+        <label for="deviceProfile" class="block text-sm font-medium text-gray-700">Gerätetyp</label>
+        <select id="deviceProfile" v-model="activeProfileId"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+          <option v-for="p in availableProfiles" :key="p.id" :value="p.id">{{ p.name }}</option>
+        </select>
+      </div>
       <div>
         <label for="timeout" class="block text-sm font-medium text-gray-700">Gruppenwechsel Timeout (Sekunden)</label>
         <input
