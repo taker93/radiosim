@@ -30,6 +30,10 @@ export const useDeviceStore = defineStore('device', {
         hasManDownFeature: false,
         manDownActive: false,
         manDownWarning: false,
+        fontSizeLarge: false,
+        isPTTActive: false,
+        isPTTCallActive: false,
+        isEmergencyActive: false,
     }),
     actions: {
         updateDateTime() {
@@ -131,7 +135,36 @@ export const useDeviceStore = defineStore('device', {
         toggleManDownWarning() {
             this.manDownWarning = !this.manDownWarning;
             this.toggleModal('ManDownWarningModal');
-        }
+        },
+        toggleFontSize() {
+            this.fontSizeLarge = !this.fontSizeLarge;
+        },
+        activatePTT() {
+            if (this.isPoweredOff || this.isBooting || this.locked) return;
+            this.isPTTActive = true;
+            this.isPTTCallActive = true;
+            this.led1Color = 'green';
+        },
+        deactivatePTT() {
+            this.isPTTActive = false;
+            this.led1Color = '';
+        },
+        endPTTCall() {
+            this.isPTTCallActive = false;
+        },
+        triggerEmergency() {
+            if (this.isPoweredOff || this.isBooting) return;
+            this.isEmergencyActive = true;
+            this.toggleModal('EmergencyModal');
+        },
+        cancelEmergency() {
+            this.isEmergencyActive = false;
+            this.closeCurrentModal();
+        },
+        pressFunctionButton() {
+            if (this.isPoweredOff || this.isBooting || this.locked) return;
+            console.log('Funktionstaste gedrückt');
+        },
     },
     getters: {
         isGroupSelected(): boolean {

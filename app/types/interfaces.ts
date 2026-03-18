@@ -34,7 +34,11 @@ export interface HardwareFeatures {
     hasKeypad: boolean;
     hasLEDs: boolean;
     hasCallButtons: boolean;
+    hasPTT?: boolean;
+    hasEmergencyButton?: boolean;
+    hasFunctionButtons?: boolean;
 }
+
 
 export interface DeviceStyles {
     screen: {
@@ -42,8 +46,11 @@ export interface DeviceStyles {
         showTitle: boolean;
         statusBar: string;
         statusText: string;
+        statusTextLarge?: string;
         timeDate: string;
+        timeDateLarge?: string;
         groupInfo: string;
+        groupInfoLarge?: string;
         noGroupBox: string;
         contextHints: string;
         spacing: string;
@@ -65,6 +72,10 @@ export interface DeviceStyles {
     };
     navigationButtons: {
         layout: 'horizontal' | 'vertical';
+    };
+    sidePanel?: {
+        widthClass: string;
+        pttHeightClass: string;
     };
 }
 

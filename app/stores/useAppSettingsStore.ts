@@ -1,4 +1,5 @@
 const WELCOME_STORAGE_KEY = 'funksim-welcome-closed';
+const CALLSIGN_STORAGE_KEY = 'funksim-callsign';
 
 // /stores/useAppSettingsStore.ts
 export const useAppSettingsStore = defineStore('settings', {
@@ -8,6 +9,7 @@ export const useAppSettingsStore = defineStore('settings', {
         modalTimeout: 5, // Standard Timeout von 5 Sekunden
         debug: false,
         welcomeMessageClosed: false,
+        callsign: '',
     }),
     actions: {
         setModalTimeout(timeout: number) {
@@ -43,6 +45,13 @@ export const useAppSettingsStore = defineStore('settings', {
         closeWelcomeMessage() {
             this.welcomeMessageClosed = true;
             localStorage.setItem(WELCOME_STORAGE_KEY, 'true');
+        },
+        loadCallsign() {
+            this.callsign = localStorage.getItem(CALLSIGN_STORAGE_KEY) ?? '';
+        },
+        setCallsign(value: string) {
+            this.callsign = value;
+            localStorage.setItem(CALLSIGN_STORAGE_KEY, value);
         },
     },
 });

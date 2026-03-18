@@ -8,6 +8,7 @@ const sideBySide = computed(() => device.activeProfile.pageLayout === 'side-by-s
 
 onMounted(() => {
   settings.loadWelcomeState();
+  settings.loadCallsign();
 });
 </script>
 

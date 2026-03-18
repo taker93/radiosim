@@ -6,6 +6,16 @@ import BootScreen from "~/components/BootScreen.vue";
 const store = useDeviceStore();
 
 const s = computed(() => store.activeProfile.styles.screen);
+
+const statusTextClass = computed(() =>
+    store.fontSizeLarge ? (s.value.statusTextLarge ?? s.value.statusText) : s.value.statusText
+);
+const timeDateClass = computed(() =>
+    store.fontSizeLarge ? (s.value.timeDateLarge ?? s.value.timeDate) : s.value.timeDate
+);
+const groupInfoClass = computed(() =>
+    store.fontSizeLarge ? (s.value.groupInfoLarge ?? s.value.groupInfo) : s.value.groupInfo
+);
 </script>
 
 <template>
@@ -33,6 +43,11 @@ const s = computed(() => store.activeProfile.styles.screen);
         <!-- Main Screen -->
         <div class="relative flex flex-col flex-1 bg-gray-200">
 
+          <!-- PTT Call Modal -->
+          <div v-if="store.isPTTCallActive" class="absolute inset-4 z-[5]">
+            <PTTCallModal/>
+          </div>
+
           <!-- Overlay Modal -->
           <div class="absolute inset-8 flex items-center justify-center z-20" v-if="store.isModalOpen">
             <!-- Modal Inhalt -->
@@ -44,6 +59,7 @@ const s = computed(() => store.activeProfile.styles.screen);
             </template>
             <ManDownModal v-else-if="store.activeModal === 'ManDownModal'"/>
             <ManDownWarningModal v-else-if="store.activeModal === 'ManDownWarningModal'"/>
+            <EmergencyModal v-else-if="store.activeModal === 'EmergencyModal'"/>
           </div>
 
           <!-- Checkmark Modal -->
@@ -58,19 +74,19 @@ const s = computed(() => store.activeProfile.styles.screen);
 
           <!-- Home Screen -->
           <div v-if="store.isGroupSelected" class="flex flex-col flex-1 relative z-0 text-blue-500" :class="s.spacing">
-            <p :class="s.statusText">{{ store.status }}</p>
-            <div class="text-right" :class="s.timeDate">
+            <p :class="statusTextClass">{{ store.status }}</p>
+            <div class="text-right" :class="timeDateClass">
               <p>{{ store.time }}<br>{{ store.date }}</p>
             </div>
-            <div :class="s.groupInfo">
+            <div :class="groupInfoClass">
               <p class="pl-4 border-y border-gray-300 text-blue-800">{{ store.group?.name }}</p>
               <p class="pl-4 text-red-600">Nr. {{ store.group?.number }}</p>
               <p class="pl-4">{{ store.folder?.name }}</p>
             </div>
           </div>
           <div v-else class="flex flex-col flex-1 relative z-0 text-blue-500" :class="s.spacing">
-            <p :class="s.statusText">Gruppe wählen</p>
-            <div class="text-right" :class="s.timeDate">
+            <p :class="statusTextClass">Gruppe wählen</p>
+            <div class="text-right" :class="timeDateClass">
               <p>{{ store.time }}<br>{{ store.date }}</p>
             </div>
             <div class="h-full">

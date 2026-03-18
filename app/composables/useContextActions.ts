@@ -11,6 +11,9 @@ export function useContextActions() {
         const action = store.currentAction;
 
         if (action === '') {
+            if (buttonRole === 'left') {
+                return () => store.toggleFontSize();
+            }
             if (buttonRole === 'middle') {
                 return () => store.toggleModal('GroupSelectionModal');
             }
@@ -42,6 +45,11 @@ export function useContextActions() {
                 };
             }
             if (buttonRole === 'right') return () => store.closeCurrentModal();
+            return null;
+        }
+
+        if (action === 'emergency') {
+            if (buttonRole === 'left') return () => store.cancelEmergency();
             return null;
         }
 

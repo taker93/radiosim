@@ -52,6 +52,17 @@ const hasManDownFeature = computed<boolean>({
         </select>
       </div>
       <div>
+        <label for="callsign" class="block text-sm font-medium text-gray-700">Rufzeichen</label>
+        <input
+            id="callsign"
+            type="text"
+            v-model="settings.callsign"
+            @input="settings.setCallsign(($event.target as HTMLInputElement).value)"
+            placeholder="z.B. FL.DIZ.2/44-1 MLF"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
         <label for="timeout" class="block text-sm font-medium text-gray-700">Gruppenwechsel Timeout (Sekunden)</label>
         <input
             id="timeout"

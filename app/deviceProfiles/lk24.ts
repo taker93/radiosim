@@ -14,6 +14,9 @@ export const lk24Profile: DeviceProfile = {
         hasKeypad: true,
         hasLEDs: true,
         hasCallButtons: true,
+        hasPTT: true,
+        hasEmergencyButton: true,
+        hasFunctionButtons: true,
     },
     defaultContexts: {
         left: 'Schrift',
@@ -31,8 +34,11 @@ export const lk24Profile: DeviceProfile = {
             showTitle: true,
             statusBar:    'h-4 py-3 text-lg',
             statusText:   'text-base tracking-widest',
+            statusTextLarge: 'text-xl tracking-widest',
             timeDate:     'text-3xl',
+            timeDateLarge: 'text-4xl',
             groupInfo:    'text-2xl',
+            groupInfoLarge: 'text-3xl',
             noGroupBox:   'text-xl p-2 m-2 border-2 border-blue-500',
             contextHints: 'text-[10px]',
             spacing:      'space-y-1 py-1 px-2',
@@ -42,5 +48,6 @@ export const lk24Profile: DeviceProfile = {
         keypad: { buttonHeightClass: 'h-6', colGapClass: 'gap-x-2', rowGapClass: 'gap-y-2' },
         navigationKnob: { variant: 'side' },
         navigationButtons: { layout: 'horizontal' },
+        sidePanel: { widthClass: 'w-14', pttHeightClass: 'h-20' },
     },
 };
