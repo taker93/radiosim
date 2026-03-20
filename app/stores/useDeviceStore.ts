@@ -152,6 +152,11 @@ export const useDeviceStore = defineStore('device', {
         endPTTCall() {
             this.isPTTCallActive = false;
         },
+        cancelPTTCall() {
+            this.isPTTActive = false;
+            this.isPTTCallActive = false;
+            this.led1Color = '';
+        },
         triggerEmergency() {
             if (this.isPoweredOff || this.isBooting) return;
             this.isEmergencyActive = true;

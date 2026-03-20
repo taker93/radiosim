@@ -53,6 +53,11 @@ export function useContextActions() {
             return null;
         }
 
+        if (action === 'pttCall') {
+            if (buttonRole === 'left') return () => store.cancelPTTCall();
+            return null;
+        }
+
         return null;
     }
 

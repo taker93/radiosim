@@ -27,8 +27,21 @@ const isDisabled = computed(() => store.isPoweredOff || store.isBooting || store
 
 const callEndTimer = ref<ReturnType<typeof setTimeout> | null>(null);
 
+watch(() => store.isPTTCallActive, (active) => {
+  if (!active && callEndTimer.value) {
+    clearTimeout(callEndTimer.value);
+    callEndTimer.value = null;
+  }
+});
+
 function onPress() {
   if (isDisabled.value) return;
+  if (!store.isGroupSelected) {
+    store.showFail = true;
+    playSound('/sounds/fail.wav');
+    setTimeout(() => { store.showFail = false; }, 2000);
+    return;
+  }
   store.activatePTT();
   if (callEndTimer.value) {
     clearTimeout(callEndTimer.value);

@@ -16,7 +16,19 @@
 <script setup lang="ts">
 import { useDeviceStore } from '~/stores/useDeviceStore';
 import { useAppSettingsStore } from '~/stores/useAppSettingsStore';
+import type { Contexts } from '~/types/interfaces';
 
 const store = useDeviceStore();
 const settings = useAppSettingsStore();
+
+onMounted(() => {
+  store.setCurrentAction('pttCall');
+  const contextMenu: Contexts = { left: 'Abbrechen', middle: null, right: null };
+  store.setContexts(contextMenu);
+});
+
+onBeforeUnmount(() => {
+  store.resetContextmenu();
+  store.setCurrentAction('');
+});
 </script>

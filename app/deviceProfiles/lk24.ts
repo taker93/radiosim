@@ -48,6 +48,6 @@ export const lk24Profile: DeviceProfile = {
         keypad: { buttonHeightClass: 'h-6', colGapClass: 'gap-x-2', rowGapClass: 'gap-y-2' },
         navigationKnob: { variant: 'side' },
         navigationButtons: { layout: 'horizontal' },
-        sidePanel: { widthClass: 'w-14', pttHeightClass: 'h-20' },
+        sidePanel: { widthClass: 'w-14', pttHeightClass: 'h-52' },
     },
 };
