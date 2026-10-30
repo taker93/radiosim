@@ -23,7 +23,7 @@
       <!-- Copyright -->
       <div
           class="flex items-center justify-center lg:justify-start lg:flex-1 gap-x-1.5 mt-3 lg:mt-0 lg:order-1">
-        <p class="text-gray-500 text-sm"> Copyright © 2024 FunkSim - <a
+        <p class="text-gray-500 text-sm"> Copyright © 2026 FunkSim - <a
             href="https://github.com/taker93/radiosim/blob/main/LICENSE" rel="noopener noreferrer" target="_blank"
             class="hover:underline"> MIT
           License </a></p>
